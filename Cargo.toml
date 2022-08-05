@@ -18,6 +18,6 @@ assert_float_eq = "1.1.3"
 [features]
 serde =  ["dep:serde"]
 
-[[bench]]
-name = "coordinates"
-harness = false
+#[[bench]]
+#name = "coordinates"
+#harness = false
