@@ -2,7 +2,7 @@
 name = "coordinates"
 description = "Simple, no nonsense, library for using two and three dimensonal coordinates in several systems."
 license = "MIT OR Apache-2.0"
-categories = ["Graphics", "Mathematics", "Science"]
+categories = ["graphics", "mathematics", "science"]
 version = "0.1.0"
 edition = "2021"
 
