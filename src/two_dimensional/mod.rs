@@ -4,9 +4,11 @@ use num_traits::Float;
 
 use crate::traits::Positional;
 
-pub mod polar;
-pub mod vector2;
+mod polar;
+mod vector2;
 
+pub use polar::*;
+pub use vector2::*;
 
 pub trait FullTwoDimensional<U> {}
 
