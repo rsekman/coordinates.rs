@@ -3,9 +3,13 @@ use std::ops::{Add, Neg, Sub};
 use num_traits::Float;
 use crate::traits::Positional;
 
-pub mod vector3;
-pub mod cylindrical;
-pub mod spherical;
+mod vector3;
+mod cylindrical;
+mod spherical;
+
+pub use vector3::*;
+pub use cylindrical::*;
+pub use spherical::*;
 
 pub trait FullThreeDimensional<U> {}
 
