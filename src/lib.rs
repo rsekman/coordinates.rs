@@ -4,6 +4,8 @@ pub mod traits;
 pub mod two_dimensional;
 /// Structures for computing points in 3D space.
 pub mod three_dimensional;
+
+pub mod prelude;
 // #[cfg(test)]
 // mod tests {
 //     #[test]

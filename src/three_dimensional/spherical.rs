@@ -58,7 +58,7 @@ impl<T: Float + TrigConsts> Spherical<T> {
     /// let right = Spherical::<f64>::new(1.0, std::f64::consts::FRAC_PI_2, 0.0); 
     /// let also_right = Spherical::<f64>::new(1.0, std::f64::consts::FRAC_PI_2, std::f64::consts::TAU);
     /// 
-    /// assert!(right.angle_between(&also_right) < std::f64::EPSILON);
+    /// assert!(right.angle_to(&also_right) < std::f64::EPSILON);
     /// ```
     /// ## Clamping Polar Angle
     /// ```
@@ -66,7 +66,7 @@ impl<T: Float + TrigConsts> Spherical<T> {
     /// # use coordinates::traits::Positional;
     /// let up = Spherical::<f64>::new(1.0, 0.0, 0.0);
     /// let also_up = Spherical::<f64>::new(1.0, std::f64::consts::TAU, 0.0);
-    /// assert!(up.angle_between(&also_up) < std::f64::EPSILON);
+    /// assert!(up.angle_to(&also_up) < std::f64::EPSILON);
     /// ```
     /// ## Clamping Radius
     /// ```
@@ -75,7 +75,7 @@ impl<T: Float + TrigConsts> Spherical<T> {
     /// let left = Spherical::<f64>::new(1.0, std::f64::consts::FRAC_PI_2, std::f64::consts::PI); 
     /// let also_left = Spherical::<f64>::new(-1.0, std::f64::consts::FRAC_PI_2, 0.0);
     /// 
-    /// assert!(left.angle_between(&also_left) < std::f64::EPSILON);
+    /// assert!(left.angle_to(&also_left) < std::f64::EPSILON);
     /// ```
     //ALTERNATE NEW METHOD
     pub fn new(radius: T, polar_angle: T, azimuthal_angle: T) -> Spherical<T> {
@@ -142,7 +142,11 @@ impl<T: Float + TrigConsts> Spherical<T> {
 
     /// Ensures the azimuth is always in the range [0,tau)
     pub fn set_azimuthal_angle(&mut self, azimuthal_angle: T) {
-        self.azimuthal_angle = (azimuthal_angle % T::TAU).abs();
+        if azimuthal_angle.is_sign_positive() {
+            self.azimuthal_angle = azimuthal_angle % T::TAU;
+        } else {
+            self.azimuthal_angle = azimuthal_angle % T::TAU + T::TAU;
+        }
     }
 
     /// Ensures polar angle is always in the range [0,pi)
@@ -479,6 +483,7 @@ mod tests {
         type Base = Spherical<f32>;
         // Test positive rotation around the z axis
         let mut expected = [Base::RIGHT, Base::FORWARD, Base::LEFT, Base::BACK];
+        println!("Subtest 1");
         test_constructor(
             &mut (0..100).map(|i| Base::new(1.0, f32::FRAC_PI_2, i as f32 * f32::FRAC_PI_2)),
             &expected,
@@ -486,13 +491,16 @@ mod tests {
 
         // Test negative rotation around the z axis
         expected.reverse();
+        expected.rotate_right(1);
+        println!("Subtest 2");
         test_constructor(
             &mut (0..100).map(|i| Base::new(1.0, f32::FRAC_PI_2, i as f32 * -f32::FRAC_PI_2)),
             &expected,
         );
 
         // Test positive rotation around the y axis for points starting at (1. 0, pi/2)
-        expected = [Base::RIGHT, Base::UP, Base::LEFT, Base::DOWN];
+        expected = [Base::UP, Base::RIGHT, Base::DOWN, Base::LEFT];
+        println!("Subtest 3");
         test_constructor(
             &mut (0..100).map(|i| Base::new(1.0, i as f32 * f32::FRAC_PI_2, 0.0)),
             &expected,
@@ -500,13 +508,16 @@ mod tests {
 
         // Test negative rotation around the y axis for points starting at (1. 0, pi/2)
         expected.reverse();
+        expected.rotate_right(1);
+        println!("Subtest 4");
         test_constructor(
             &mut (0..100).map(|i| Base::new(1.0, i as f32 * -f32::FRAC_PI_2, 0.0)),
             &expected,
         );
 
         // Test positive rotation around the x axis for points starting at (1. 0, pi/2)
-        expected = [Base::BACK, Base::UP, Base::FORWARD, Base::DOWN];
+        expected = [Base::UP, Base::FORWARD, Base::DOWN, Base::BACK];
+        println!("Subtest 5");
         test_constructor(
             &mut (0..100).map(|i| Base::new(1.0, i as f32 * f32::FRAC_PI_2, f32::FRAC_PI_2)),
             &expected,
@@ -514,6 +525,8 @@ mod tests {
 
         // Test negative rotation around the x axis for points starting at (1. 0, pi/2)
         expected.reverse();
+        expected.rotate_right(1);
+        println!("Subtest 6");
         test_constructor(
             &mut (0..100).map(|i| Base::new(1.0, i as f32 * -f32::FRAC_PI_2, f32::FRAC_PI_2)),
             &expected,

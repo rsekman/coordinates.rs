@@ -16,7 +16,7 @@ where
     /// 
     /// ## In 2D
     /// ```
-    /// # use coordinates::two_dimensional::Vector2;
+    /// # use coordinates::prelude::*;
     /// let right =  Vector2::<f64>::RIGHT;
     /// let up = Vector2::<f64>::UP;
     /// 
@@ -25,7 +25,7 @@ where
     /// 
     /// ## In 3D
     /// ```
-    /// # use coordinates::three_dimensional::Vector3;
+    /// # use coordinates::prelude::*;
     /// let right= Vector3::<f64>::RIGHT;
     /// let up = Vector3::<f64>::UP;
     /// 
