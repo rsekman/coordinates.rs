@@ -9,8 +9,20 @@ use crate::{
 use serde::{Deserialize, Serialize};
 #[cfg_attr(serde, derive(Serialize, Deserialize))]
 #[derive(Debug, Copy,  Clone, PartialEq, Eq, PartialOrd)]
+
+/// Coordinate in the format (r, theta)
+/// 
+/// Radius is the distance from the origin.
+/// 
+/// Theta is the angle between the vector pointing to this coordinate and the 
+/// unit vector `[1, 0]` in the clockwise direction. (in radians)
+/// 
+/// > i.e. the angle `∠POX` where `P` is the coordinate, `O` is the origin `[0, 0]`
+/// and `X` is a point on the positive region of the x axis, e.g. `[1, 0]` 
 pub struct Polar<T: Float> {
+    /// Distance from the origin.
     pub radius: T,
+    /// Angle from the `x` axis (in radians).
     pub theta: T,
 }
 
@@ -64,7 +76,7 @@ impl<T: Float> Dot<T> for Polar<T> {
 }
 
 impl<T: Float> Positional<T> for Polar<T> {
-    fn angle_between(&self, other: &Self) -> T {
+    fn angle_to(&self, other: &Self) -> T {
         if self.radius.is_zero() || other.radius.is_zero() {
             // If one or both of the thetas are undefined, return 0
             T::zero()

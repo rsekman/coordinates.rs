@@ -17,8 +17,22 @@ use serde::{Deserialize, Serialize};
 
 #[cfg_attr(serde, derive(Serialize, Deserialize))]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd)]
+/// Point in cartesian space on a 2D plane
+/// 
+/// # Examples
+/// 
+/// ```rust
+/// # use coordinates::two_dimensional::{TwoDimensionalConsts, Vector2};
+/// let origin = Vector2 {
+///     x: 0.0,
+///     y: 0.0,
+/// };
+/// # assert_eq!(origin, Vector2::ORIGIN);
+/// ```
 pub struct Vector2<T: Num> {
+    /// Distance along the x axis
     pub x: T,
+    /// Distance along the y axis
     pub y: T,
 }
 
