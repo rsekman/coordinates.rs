@@ -37,7 +37,7 @@ impl<T: num_traits::Float + TrigConsts> Cylindrical<T> {
     /// let right = Cylindrical::<f64>::new(1.0, 0.0, 0.0);
     /// let also_right = Cylindrical::<f64>::new(1.0, 0.0, std::f64::consts::TAU);
     /// 
-    /// assert!(right.angle_between(&also_right) < std::f64::EPSILON);
+    /// assert!(right.angle_to(&also_right) < std::f64::EPSILON);
     /// ```
     /// 
     /// ## Maps radius to [0, +infinity]
@@ -47,7 +47,7 @@ impl<T: num_traits::Float + TrigConsts> Cylindrical<T> {
     /// let right = Cylindrical::<f64>::new(1.0, 10.0, 0.0);
     /// let also_right = Cylindrical::<f64>::new(-1.0, -10.0, std::f64::consts::PI);
     /// 
-    /// assert!(right.angle_between(&also_right) < std::f64::EPSILON);
+    /// assert!(right.angle_to(&also_right) < std::f64::EPSILON);
     /// ```
     pub fn new(radius: T, height: T, azimuth: T) -> Self {
         let true_azimuth = (azimuth - if radius.is_sign_negative() {
