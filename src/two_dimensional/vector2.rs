@@ -152,6 +152,27 @@ impl<T: Num> From<(T, T)> for Vector2<T> {
     }
 }
 
+impl<T: Num> From<Vector2<T>> for (T, T) {
+    fn from(v: Vector2<T>) -> Self {
+        (v.x, v.y)
+    }
+}
+
+impl<T: Num + Clone> From<[T;2]> for Vector2<T> {
+    fn from(a: [T;2]) -> Self {
+        Vector2 {
+            x: a[0].clone(),
+            y: a[1].clone(),
+        }
+    }
+}
+
+impl<T: Num> From<Vector2<T>> for [T;2] {
+    fn from(v: Vector2<T>) -> Self {
+        [v.x, v.y]
+    }
+}
+
 impl<T: Float> From<Polar<T>> for Vector2<T> {
     fn from(polar: Polar<T>) -> Self {
         (&polar).into()
