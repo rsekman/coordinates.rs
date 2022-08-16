@@ -16,15 +16,17 @@ use serde::{Deserialize, Serialize};
  *********************/
 
 #[cfg_attr(serde, derive(Serialize, Deserialize))]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd)]
+#[derive(Debug, Copy, Clone)]
 /// A point in 3D space using spherical coordinates as defined by [ISO 80000-2:2019](https://en.wikipedia.org/wiki/Spherical_coordinate_system#Definition).
 /// 
+/// This means that the coordinates are provided in the order `radius` (`r`), `polar angle` (`theta`), and finally `azimuthal angle` (`phi`)
 /// ## Examples
 /// 
 /// ```
 /// # use coordinates::three_dimensional::Spherical;
-/// let right = Spherical::new(0.0, 0.0, 0.0);
-/// assert_eq!(right, Spherical::<f64>::RIGHT);
+/// # use crate::coordinates::three_dimensional::ThreeDimensionalConsts;
+/// let right = Spherical::<f64>::new(1.0, 0.0, 0.0);
+/// assert_eq!(right, Spherical::<f64>::UP);
 /// ```
 pub struct Spherical<T: Float> {
     /// Distance from the origin
@@ -40,28 +42,41 @@ impl<T: Float + TrigConsts> Spherical<T> {
     ///
     /// # Mapping
     ///
+    /// - `azimuthal angle` ∈ [0,τ)
+    ///     - Doesn't have side effects
     /// - `Polar angle ∈ [0,π]`
-    ///   - If `polar angle < 0`
-    ///     - `Polar angle := -Polar angle`
-    ///     - `Azimuthal angle := azimuthal angle + π`
-    ///   - If `Polar angle > π`
-    ///     - `Polar angle := polar angle % τ`
-    ///     - If polar angle is still greater than π
-    ///         - `Azimuthal angle := Azimuthal angle + π`
-    ///         - `Polar angle := τ - Polar angle`
-    /// - `azimuthal angle ∈ [0,τ]`
-    ///   - If `azimuthal angle > τ`
-    ///     - `azimuthal angle := azimuthal angle % τ`
-    ///   - If `azimuthal angle < 0`
-    ///     - `azimuthal angle := τ + azimuthal angle % τ`
-    ///     - note: this is because rust by default will return the
-    /// negative of the complement of the result given when taking
-    /// the modulo with a positive numerator. i.e. `-2 % 5 = -3` whereas `2 % 5 = 2`
+    ///     - Mutates azimuthal angle 
     /// - `radius ∈ [0,∞)`
-    ///   - If `radius < 0`
-    ///     - `radius := |radius|`
-    ///     - `azimuthal angle := azimuthal angle + π % τ`
-    ///     - `Polar angle := π - polar angle`
+    ///     - Mutates polar angle and azimuthal angle
+    /// 
+    /// # Examples
+    /// ## Clamping Azimuthal angle
+    /// 
+    /// ```
+    /// # use coordinates::three_dimensional::Spherical;
+    /// # use coordinates::traits::Positional;
+    /// let right = Spherical::<f64>::new(1.0, std::f64::consts::FRAC_PI_2, 0.0); 
+    /// let also_right = Spherical::<f64>::new(1.0, std::f64::consts::FRAC_PI_2, std::f64::consts::TAU);
+    /// 
+    /// assert!(right.angle_between(&also_right) < std::f64::EPSILON);
+    /// ```
+    /// ## Clamping Polar Angle
+    /// ```
+    /// # use coordinates::three_dimensional::Spherical;
+    /// # use coordinates::traits::Positional;
+    /// let up = Spherical::<f64>::new(1.0, 0.0, 0.0);
+    /// let also_up = Spherical::<f64>::new(1.0, std::f64::consts::TAU, 0.0);
+    /// assert!(up.angle_between(&also_up) < std::f64::EPSILON);
+    /// ```
+    /// ## Clamping Radius
+    /// ```
+    /// # use coordinates::three_dimensional::Spherical;
+    /// # use coordinates::traits::Positional;
+    /// let left = Spherical::<f64>::new(1.0, std::f64::consts::FRAC_PI_2, std::f64::consts::PI); 
+    /// let also_left = Spherical::<f64>::new(-1.0, std::f64::consts::FRAC_PI_2, 0.0);
+    /// 
+    /// assert!(left.angle_between(&also_left) < std::f64::EPSILON);
+    /// ```
     //ALTERNATE NEW METHOD
     pub fn new(radius: T, polar_angle: T, azimuthal_angle: T) -> Spherical<T> {
         let mut result = Self {
@@ -69,9 +84,9 @@ impl<T: Float + TrigConsts> Spherical<T> {
             polar_angle,
             azimuthal_angle,
         };
-        result.set_radius(radius);
-        result.set_polar_angle(polar_angle);
         result.set_azimuthal_angle(azimuthal_angle);
+        result.set_polar_angle(polar_angle);
+        result.set_radius(radius);
 
         result
     }
@@ -117,14 +132,20 @@ impl<T: Float + TrigConsts> Spherical<T> {
     //     }
     // }
 
+    /// Returns the latitude/elevation of the point.
+    ///
+    /// i.e. the polar angle with respect to the equator instead of the 
+    /// north pole
     pub fn get_elevation(&self) -> T {
         T::FRAC_PI_2 - self.polar_angle
     }
 
+    /// Ensures the azimuth is always in the range [0,tau)
     pub fn set_azimuthal_angle(&mut self, azimuthal_angle: T) {
-        self.azimuthal_angle = azimuthal_angle % T::TAU;
+        self.azimuthal_angle = (azimuthal_angle % T::TAU).abs();
     }
 
+    /// Ensures polar angle is always in the range [0,pi)
     pub fn set_polar_angle(&mut self, polar_angle: T) {
         // `Checked polar angle` ∈ [0,tau) when `polar angle` >= 0
         // `Checked polar angle` ∈ (0,tau] when `polar angle` <= -0
@@ -147,9 +168,10 @@ impl<T: Float + TrigConsts> Spherical<T> {
         self.polar_angle = checked_polar_angle;
     }
 
+    /// Ensures radius is always in the range [0,+infinity]
     pub fn set_radius(&mut self, radius : T) {
         if radius.is_sign_negative() {
-            self.set_azimuthal_angle(self.azimuthal_angle + T::PI);
+            self.set_azimuthal_angle(self.azimuthal_angle - T::PI);
             self.set_polar_angle(T::PI - self.polar_angle);
             self.radius = -radius;
         } else {
@@ -228,7 +250,7 @@ impl<T: Float> crate::traits::Cross3D for Spherical<T> {
 
 impl<T: Float + TrigConsts> Positional<T> for Spherical<T> {
     /// Using the spherical law of cosines
-    fn angle_between(&self, other: &Self) -> T {
+    fn angle_to(&self, other: &Self) -> T {
         let (lat_sin, lat_cos) = self.polar_angle.sin_cos();
         let (lat_sin_b, lat_cos_b) = other.polar_angle.sin_cos();
 
@@ -275,6 +297,24 @@ impl<T: Float> std::ops::Div<T> for Spherical<T> {
             azimuthal_angle: self.azimuthal_angle,
             polar_angle: self.polar_angle,
         }
+    }
+}
+
+impl<T: Float + TrigConsts> PartialEq for Spherical<T> {
+    fn eq(&self, other: &Self) -> bool {
+        self.angle_to(other) < T::epsilon()
+    }
+}
+
+impl<T: Float + TrigConsts> Eq for Spherical<T> {}
+impl<T: Float + TrigConsts> PartialOrd for Spherical<T> {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        match self.radius.partial_cmp(&other.radius) {
+            Some(core::cmp::Ordering::Equal) => {}
+            ord => return ord,
+        }
+        
+        self.polar_angle.partial_cmp(&other.polar_angle)
     }
 }
 
@@ -397,10 +437,10 @@ mod tests {
             Spherical::<f32>::LEFT,
             Spherical::<f32>::RIGHT,
         ] {
-            assert_float_relative_eq!(f32::FRAC_PI_2, up.angle_between(&point), EPSILON);
+            assert_float_relative_eq!(f32::FRAC_PI_2, up.angle_to(&point), EPSILON);
         }
 
-        assert_float_relative_eq!(f32::PI, up.angle_between(&Spherical::<f32>::DOWN), EPSILON);
+        assert_float_relative_eq!(f32::PI, up.angle_to(&Spherical::<f32>::DOWN), EPSILON);
     }
 
     #[test]
@@ -422,8 +462,8 @@ mod tests {
             let azi_altered = Spherical::new(1.0, root.polar_angle, root.azimuthal_angle + delta);
             let polar_altered = Spherical::new(1.0, root.polar_angle + delta, root.azimuthal_angle);
 
-            let delta_azimuth = azi_altered.angle_between(&root);
-            let delta_polar = polar_altered.angle_between(&root);
+            let delta_azimuth = azi_altered.angle_to(&root);
+            let delta_polar = polar_altered.angle_to(&root);
 
             println!("Delta={}", delta);
             println!("dist({}, {}) = {}", root, azi_altered, delta_azimuth);
@@ -499,7 +539,7 @@ mod tests {
             //     expected[i].polar_angle,
             //     f32::EPSILON * (total_i as f32 * f32::FRAC_PI_2).log(2.0).max(1.0)
             // );
-            let deviation = entry.angle_between(&expected[i]);
+            let deviation = entry.angle_to(&expected[i]);
 
             // assert_float_relative_eq!(deviation, 0.0, f32::EPSILON);
             // Maximum acceptable inaccuracy is 0.25" (seconds of an arc)

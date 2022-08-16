@@ -1,6 +1,8 @@
 pub mod traits;
 // pub mod projections;
+/// Structures for computing points on a 2D plane, e.g. cartesian plane.
 pub mod two_dimensional;
+/// Structures for computing points in 3D space.
 pub mod three_dimensional;
 // #[cfg(test)]
 // mod tests {
