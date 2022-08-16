@@ -541,19 +541,23 @@ mod tests {
             // );
             let deviation = entry.angle_to(&expected[i]);
 
+
+            print!("Winding of {:5.2}τ rad ", (total_i as f32) / 4.0);
             // assert_float_relative_eq!(deviation, 0.0, f32::EPSILON);
             // Maximum acceptable inaccuracy is 0.25" (seconds of an arc)
             if deviation.abs() > ARC_SECOND {
-                println!("Expected {}, got {}, deviation of {}", expected[i], entry, deviation.abs());
+                println!("failed (deviation {})", deviation.abs());
+                println!("Expected {}, got {}", expected[i], entry);
             }
             assert_float_relative_eq!(deviation, 0.0, ARC_SECOND / 4.0);
 
             println!(
-                "Winding of {:5.2}τ rad worked (deviations: {})",
-                total_i as f32 / 4.0,
+               "worked (deviations: {})",
                 deviation
             );
             total_i += 1;
         }
+        println!("\x1b[32mSubtest Passed\x1b[0m");
+        println!();
     }
 }
