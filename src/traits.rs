@@ -4,7 +4,34 @@ pub trait Positional<T: Float>
 where
     Self: Magnitude<T> + Dot<T> + CrossMagnitude<T> + Copy
 {
-    fn angle_between(&self, other: &Self) -> T {
+    /// Angle between two points in space.
+    /// 
+    /// # Returns
+    /// 
+    /// The result is a positive value (in radians) aside from if 
+    /// `self.magnitude() == 0` or `other.magnitude() == 0` where it will return
+    /// NaN (acos(infinity) is undefined)
+    /// 
+    /// # Examples
+    /// 
+    /// ## In 2D
+    /// ```
+    /// # use coordinates::prelude::*;
+    /// let right =  Vector2::<f64>::RIGHT;
+    /// let up = Vector2::<f64>::UP;
+    /// 
+    /// assert!((right.angle_to(&up) - std::f64::consts::FRAC_PI_2).abs() < std::f64::EPSILON);
+    /// ```
+    /// 
+    /// ## In 3D
+    /// ```
+    /// # use coordinates::prelude::*;
+    /// let right= Vector3::<f64>::RIGHT;
+    /// let up = Vector3::<f64>::UP;
+    /// 
+    /// assert!((right.angle_to(&up) - std::f64::consts::FRAC_PI_2).abs() < std::f64::EPSILON);
+    /// ```
+    fn angle_to(&self, other: &Self) -> T {
         (self.dot(&other)/(self.magnitude()*other.magnitude())).acos()
     }
 }

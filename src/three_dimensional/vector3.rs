@@ -20,8 +20,11 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd)]
 /// A point in 3d space
 pub struct Vector3<T: num_traits::Float> {
+    /// Left (-)/right (+) axis
     pub x: T,
+    /// In (+)/out (-) axis
     pub y: T,
+    /// Up (+)/down (-) axis
     pub z: T,
 }
 
@@ -111,7 +114,7 @@ impl<T: Float> crate::traits::Cross3D for Vector3<T> {
 }
 
 impl<T: Float> Positional<T> for Vector3<T> {
-    fn angle_between(&self, other: &Self) -> T {
+    fn angle_to(&self, other: &Self) -> T {
         (self.dot(&other) / (self.magnitude() * other.magnitude())).acos()
     }
 }
@@ -200,7 +203,7 @@ impl<T: Float> From<Cylindrical<T>> for Vector3<T> {
         Vector3 {
             x: cyl.radius * cos,
             //FIXME may be off by as much as `8.742278e-8` when `azimuth` == `pi`
-            // that's about 60 cm or 22" when `r=the radius of the earth`
+            // that's about 22" or 60 cm when `r=the radius of the earth` for f32
             y: cyl.radius * sin,
             z: cyl.height,
         }
@@ -276,13 +279,13 @@ mod tests {
                 "Angle between\n{:?} and\n{:?} is\n{}, dot is {}",
                 &point,
                 &up,
-                up.angle_between(&point),
+                up.angle_to(&point),
                 up.dot(&point)
             );
             
-            assert_float_relative_eq!(f32::FRAC_PI_2, up.angle_between(&point), EPSILON);
+            assert_float_relative_eq!(f32::FRAC_PI_2, up.angle_to(&point), EPSILON);
         }
 
-        assert_float_relative_eq!(f32::PI, up.angle_between(&Vector3::<f32>::DOWN), EPSILON);
+        assert_float_relative_eq!(f32::PI, up.angle_to(&Vector3::<f32>::DOWN), EPSILON);
     }
 }
