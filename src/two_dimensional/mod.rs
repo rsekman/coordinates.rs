@@ -24,7 +24,7 @@ impl<T, U: Float> FullTwoDimensional<U> for T where
 }
 
 
-
+/// Trait holding constants for unit vectors and the origin
 pub trait TwoDimensionalConsts<T: Float> {
     /// Center of the coordinate space
     const ORIGIN: Self;
