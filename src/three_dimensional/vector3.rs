@@ -197,12 +197,22 @@ impl<T: Float> Into<[T; 3]> for Vector3<T> {
     }
 }
 
+impl<T: Float> From<[T; 3]> for Vector3<T> {
+    fn from(a: [T; 3]) -> Self {
+        Self {
+            x: a[0],
+            y: a[1],
+            z: a[2],
+        }
+    }
+}
+
 impl<T: Float> From<Cylindrical<T>> for Vector3<T> {
     fn from(cyl: Cylindrical<T>) -> Self {
         let (sin, cos) = cyl.azimuth.sin_cos();
         Vector3 {
             x: cyl.radius * cos,
-            //FIXME may be off by as much as `8.742278e-8` when `azimuth` == `pi`
+            //BUG may be off by as much as `8.742278e-8` when `azimuth` == `pi`
             // that's about 22" or 60 cm when `r=the radius of the earth` for f32
             y: cyl.radius * sin,
             z: cyl.height,
