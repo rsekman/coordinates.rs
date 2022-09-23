@@ -111,3 +111,18 @@ impl<T: Float> From<&Vector2<T>> for Polar<T> {
         }
     }
 }
+impl<T: Float> From<(T, T)> for Polar<T> {
+    fn from(tuple: (T, T)) -> Self {
+        Polar {
+            radius: tuple.0,
+            theta: tuple.1,
+        }
+    }
+}
+impl<T: Float> From<Polar<T>> for (T, T) {
+    fn from(polar: Polar<T>) -> Self {
+        (polar.radius, polar.theta)
+    }
+}
+
+
