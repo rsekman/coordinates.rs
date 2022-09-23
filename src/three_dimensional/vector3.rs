@@ -212,7 +212,7 @@ impl<T: Float> From<Cylindrical<T>> for Vector3<T> {
         let (sin, cos) = cyl.azimuth.sin_cos();
         Vector3 {
             x: cyl.radius * cos,
-            //FIXME may be off by as much as `8.742278e-8` when `azimuth` == `pi`
+            //BUG may be off by as much as `8.742278e-8` when `azimuth` == `pi`
             // that's about 22" or 60 cm when `r=the radius of the earth` for f32
             y: cyl.radius * sin,
             z: cyl.height,
