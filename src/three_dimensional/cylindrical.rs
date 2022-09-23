@@ -4,7 +4,7 @@ use std::{
 };
 
 use super::vector3::Vector3;
-use crate::traits::{Positional, TrigConsts};
+use crate::{traits::{Positional, TrigConsts}, prelude::Magnitude};
 use num_traits::Float;
 
 #[cfg(serde)]
@@ -237,35 +237,23 @@ impl<T: Float> Into<(T, T, T)> for Cylindrical<T> {
 
 impl<T: Float + TrigConsts> From<Vector3<T>> for Cylindrical<T> {
     fn from(cart: Vector3<T>) -> Self {
-        let radius = (cart.x * cart.x + cart.y * cart.y).sqrt();
-        let azimuthal_angle = if radius == T::ZERO {
-            T::ZERO
-        } else {
-            if cart.x >= T::ZERO {
-                (cart.y / radius).asin()
-            } else {
-                -(cart.y / radius).asin() + T::PI
-            }
-        };
-
-        Cylindrical {
-            azimuth: azimuthal_angle,
-            radius,
-            height: cart.z,
-        }
+        (&cart).into()
     }
 }
 
 impl<T: Float + TrigConsts> From<&Vector3<T>> for Cylindrical<T> {
     fn from(cart: &Vector3<T>) -> Self {
-        let radius = (cart.x * cart.x + cart.y * cart.y).sqrt();
-        let azimuthal_angle = if radius == T::ZERO {
+        let radius = cart.magnitude();
+        let azimuthal_angle = if radius.is_zero() {
+            // Avoid NaN azimuthal angle
             T::ZERO
         } else {
-            if cart.x >= T::ZERO {
+            if cart.x.is_sign_positive() {
+                // 1st or 4rd quadrant
                 (cart.y / radius).asin()
             } else {
-                -(cart.y / radius).asin() + T::PI
+                // 2nd or 3th quadrant
+                T::PI - (cart.y / radius).asin()
             }
         };
 

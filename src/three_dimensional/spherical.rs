@@ -91,47 +91,6 @@ impl<T: Float + TrigConsts> Spherical<T> {
         result
     }
 
-    // pub fn new(radius: T, polar_angle: T, azimuthal_angle: T) -> Spherical<T> {
-        
-        
-    //     // `Checked polar angle` ∈ [0,tau) when `polar angle` >= 0
-    //     // `Checked polar angle` ∈ (0,tau] when `polar angle` <= -0
-    //     let mut checked_polar_angle = polar_angle % T::TAU
-    //         + if polar_angle.is_sign_negative() {
-    //             // If polar angle is negative, checked polar angle ∈ (-tau, 0]
-    //             // Add tau to move to the range (0,tau]
-    //             T::TAU
-    //         } else {
-    //             T::ZERO
-    //         };
-
-    //     // `Checked azimuthal angle` ∈ [0,tau) when `azimuthal angle` >= 0
-    //     // `Checked azimuthal angle` ∈ (0,tau] when `azimuthal angle` <= -0
-    //     let mut checked_azimuthal_angle = (azimuthal_angle
-    //         + if checked_polar_angle > T::PI {
-    //             // `checked polar angle` is now ∈ [0,pi]
-    //             checked_polar_angle = checked_polar_angle - T::PI;
-    //             T::PI
-    //         } else {
-    //             T::ZERO
-    //         })
-    //         % T::TAU;
-
-    //     let checked_radius = if radius.is_sign_negative() {
-    //         checked_polar_angle = T::PI - checked_polar_angle;
-    //         checked_azimuthal_angle = (checked_azimuthal_angle + T::PI) % T::TAU;
-    //         -radius
-    //     } else {
-    //         radius
-    //     };
-
-    //     Spherical {
-    //         polar_angle: checked_polar_angle,
-    //         azimuthal_angle: checked_azimuthal_angle,
-    //         radius: checked_radius,
-    //     }
-    // }
-
     /// Returns the latitude/elevation of the point.
     ///
     /// i.e. the polar angle with respect to the equator instead of the 
@@ -362,6 +321,12 @@ impl<T: Float> From<(T, T, T)> for Spherical<T> {
             polar_angle: tuple.1,
             azimuthal_angle: tuple.2,
         }
+    }
+}
+
+impl<T: Float> From<Spherical<T>> for (T, T, T) {
+    fn from(sph: Spherical<T>) -> Self {
+        (sph.radius, sph.polar_angle, sph.azimuthal_angle)
     }
 }
 
