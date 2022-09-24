@@ -1,3 +1,7 @@
+#[cfg(feature = "serde")]
+#[macro_use]
+use serde::{Deserialize, Serialize};
+
 pub mod traits;
 // pub mod projections;
 /// Structures for computing points on a 2D plane, e.g. cartesian plane.
