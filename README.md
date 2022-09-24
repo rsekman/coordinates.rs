@@ -5,12 +5,12 @@
 Add the following to your `cargo.toml` under `[dependencies]`
 
 ```toml
-coordinates = "0.3.0"
+coordinates = "0.3.1"
 ```
 
 if you want additional features — like serializing and deserializing — your `[dependencies]` line will look more like this
 ```toml
-coordinates = { version = "0.3.0", features = ["serde"] }
+coordinates = { version = "0.3.1", features = ["serde"] }
 ```
 
 In a file import the coordinate system you want, or all of them through 
