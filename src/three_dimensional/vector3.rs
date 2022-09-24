@@ -9,14 +9,14 @@ use crate::traits::{Dot, Magnitude, Positional};
 
 use super::{cylindrical::Cylindrical, spherical::Spherical};
 
-#[cfg(serde)]
+#[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
 /***************
  * BASE STRUCT *
  ***************/
 
-#[cfg_attr(serde, derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd)]
 /// A point in 3d space
 pub struct Vector3<T: num_traits::Float> {

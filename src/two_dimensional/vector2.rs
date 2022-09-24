@@ -9,13 +9,13 @@ use crate::traits::TrigConsts;
 
 use super::polar::Polar;
 
-#[cfg(serde)]
+#[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 /***************
  * BASE STRUCT *
  ***************/
 
-#[cfg_attr(serde, derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd)]
 /// Point in cartesian space on a 2D plane
 /// 

@@ -5,9 +5,9 @@ use crate::{
     two_dimensional::vector2::Vector2,
 };
 
-#[cfg(serde)]
+#[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
-#[cfg_attr(serde, derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Copy,  Clone, PartialEq, Eq, PartialOrd)]
 
 /// Coordinate in the format (r, theta)
@@ -21,6 +21,7 @@ use serde::{Deserialize, Serialize};
 /// and `X` is a point on the positive region of the x axis, e.g. `[1, 0]` 
 pub struct Polar<T: Float> {
     /// Distance from the origin.
+    #[cfg_attr(feature = "serde", serde(rename = "r"))]
     pub radius: T,
     /// Angle from the `x` axis (in radians).
     pub theta: T,
