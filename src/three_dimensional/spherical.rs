@@ -8,14 +8,14 @@ use num_traits::Float;
 use super::{cylindrical::Cylindrical, vector3::Vector3};
 use crate::traits::{Magnitude, Positional, TrigConsts};
 
-#[cfg(serde)]
+#[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
 /*********************
  * STRUCT DEFINITION *
  *********************/
 
-#[cfg_attr(serde, derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Copy, Clone)]
 /// A point in 3D space using spherical coordinates as defined by [ISO 80000-2:2019](https://en.wikipedia.org/wiki/Spherical_coordinate_system#Definition).
 /// 
@@ -30,10 +30,13 @@ use serde::{Deserialize, Serialize};
 /// ```
 pub struct Spherical<T: Float> {
     /// Distance from the origin
+    #[cfg_attr(feature = "serde", serde(rename = "r"))]
     pub radius: T,
     /// Angle from the positive `z` direction
+    #[cfg_attr(feature = "serde", serde(rename = "theta"))]
     pub polar_angle: T,
     /// angle from the positive `x` direction along the `xy` plane
+    #[cfg_attr(feature = "serde", serde(rename = "phi"))]
     pub azimuthal_angle: T,
 }
 

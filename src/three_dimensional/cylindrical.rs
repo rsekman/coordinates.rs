@@ -7,22 +7,25 @@ use super::vector3::Vector3;
 use crate::{traits::{Positional, TrigConsts}, prelude::Magnitude};
 use num_traits::Float;
 
-#[cfg(serde)]
+#[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
 /*********************
  * STRUCT DEFINITION *
  *********************/
 
-#[cfg_attr(serde, derive(Serialize, Deserialize))]
+ #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd)]
 /// A point in 3D space
 pub struct Cylindrical<T: num_traits::Float> {
     /// Angle from the positive `x` direction
+    #[cfg_attr(feature = "serde", serde(rename = "phi"))]
     pub azimuth: T,
     /// Distance from the origin along the `xy` plane
+    #[cfg_attr(feature = "serde", serde(rename = "r"))]
     pub radius: T,
     /// Distance along the `z` axis
+    #[cfg_attr(feature = "serde", serde(rename = "h"))]
     pub height: T,
 }
 
