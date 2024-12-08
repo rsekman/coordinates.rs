@@ -16,7 +16,7 @@ use serde::{Deserialize, Serialize};
  *********************/
 
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, Hash)]
 /// A point in 3D space using spherical coordinates as defined by [ISO 80000-2:2019](https://en.wikipedia.org/wiki/Spherical_coordinate_system#Definition).
 /// 
 /// This means that the coordinates are provided in the order `radius` (`r`), `polar angle` (`theta`), and finally `azimuthal angle` (`phi`)

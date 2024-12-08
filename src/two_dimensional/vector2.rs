@@ -16,7 +16,7 @@ use serde::{Deserialize, Serialize};
  ***************/
 
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Hash)]
 /// Point in cartesian space on a 2D plane
 /// 
 /// # Examples
