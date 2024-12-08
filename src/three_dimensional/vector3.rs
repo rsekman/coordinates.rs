@@ -3,7 +3,7 @@ use std::{
     ops::{Add, Mul, Neg, Sub},
 };
 
-use num_traits::Float;
+use num_traits::{CheckedAdd, CheckedSub, Float};
 
 use crate::traits::{Dot, Magnitude, Positional};
 
@@ -180,6 +180,30 @@ impl<T: Float + Mul + Copy> Mul<T> for Vector3<T> {
             y: self.y * rhs,
             z: self.z * rhs,
         }
+    }
+}
+
+/*********************
+ * CHECKED ARITHMETIC TRAITS *
+ *********************/
+
+impl<T: Float + CheckedAdd> CheckedAdd for Vector3<T> {
+    fn checked_add(&self, rhs: &Self) -> Option<Self> {
+        Some(Vector3 {
+            x: self.x.checked_add(&rhs.x)?,
+            y: self.y.checked_add(&rhs.y)?,
+            z: self.z.checked_add(&rhs.z)?,
+        })
+    }
+}
+
+impl<T: Float + CheckedSub> CheckedSub for Vector3<T> {
+    fn checked_sub(&self, rhs: &Self) -> Option<Self> {
+        Some(Vector3 {
+            x: self.x.checked_sub(&rhs.x)?,
+            y: self.y.checked_sub(&rhs.y)?,
+            z: self.z.checked_sub(&rhs.z)?,
+        })
     }
 }
 
