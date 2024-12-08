@@ -292,7 +292,7 @@ mod tests {
                 up.angle_to(&point),
                 up.dot(&point)
             );
-            
+
             assert_float_relative_eq!(f32::FRAC_PI_2, up.angle_to(&point), EPSILON);
         }
 
