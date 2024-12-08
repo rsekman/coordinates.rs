@@ -2,7 +2,7 @@
 name = "coordinates"
 description = "Simple, no nonsense, library for using two and three dimensonal coordinates in several systems."
 categories = ["graphics", "mathematics", "science"]
-version = "0.3.1"
+version = "0.4.0"
 edition = "2021"
 license = "MIT-0 OR 0BSD"
 repository = "https://github.com/luke-magnusson/coordinates.rs"
