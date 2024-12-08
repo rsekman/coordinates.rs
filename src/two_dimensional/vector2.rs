@@ -1,6 +1,6 @@
 use std::{
     fmt::Display,
-    ops::{Add, Neg, Sub},
+    ops::{Add, Mul, Neg, Sub},
 };
 
 use num_traits::{Float, Num};
@@ -124,6 +124,17 @@ impl<T: Num + Sub> Sub for Vector2<T> {
         Vector2 {
             x: self.x - rhs.x,
             y: self.y - rhs.y,
+        }
+    }
+}
+
+impl<T: Num + Mul + Copy> Mul<T> for Vector2<T> {
+    type Output = Vector2<T>;
+
+    fn mul(self, rhs: T) -> Self::Output {
+        Vector2 {
+            x: self.x * rhs,
+            y: self.y * rhs,
         }
     }
 }

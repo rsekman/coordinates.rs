@@ -1,6 +1,6 @@
 use std::{
     fmt::Display,
-    ops::{Add, Neg, Sub},
+    ops::{Add, Div, Mul, Neg, Sub},
 };
 
 use super::vector3::Vector3;
@@ -194,7 +194,19 @@ impl<T: Float + TrigConsts> Sub for Cylindrical<T> {
     }
 }
 
-impl<T: Float> std::ops::Div<T> for Cylindrical<T> {
+impl<T: Float> Mul<T> for Cylindrical<T> {
+    type Output = Self;
+
+    fn mul(self, rhs: T) -> Self::Output {
+        Self {
+            radius: self.radius * rhs,
+            height: self.height * rhs,
+            azimuth: self.azimuth,
+        }
+    }
+}
+
+impl<T: Float> Div<T> for Cylindrical<T> {
     type Output = Self;
 
     fn div(self, rhs: T) -> Self::Output {

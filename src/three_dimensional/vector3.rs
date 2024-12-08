@@ -1,6 +1,6 @@
 use std::{
     fmt::Display,
-    ops::{Add, Neg, Sub},
+    ops::{Add, Mul, Neg, Sub},
 };
 
 use num_traits::Float;
@@ -167,6 +167,18 @@ impl<T: Float> std::ops::Div<T> for Vector3<T> {
             x: self.x / rhs,
             y: self.y / rhs,
             z: self.z / rhs,
+        }
+    }
+}
+
+impl<T: Float + Mul + Copy> Mul<T> for Vector3<T> {
+    type Output = Vector3<T>;
+
+    fn mul(self, rhs: T) -> Self::Output {
+        Vector3 {
+            x: self.x * rhs,
+            y: self.y * rhs,
+            z: self.z * rhs,
         }
     }
 }
