@@ -1,4 +1,5 @@
 use num_traits::Float;
+use std::ops::{Add, Div, Mul, Neg, Sub};
 
 use crate::{
     traits::{CrossMagnitude, Dot, Magnitude, Positional, TrigConsts},
@@ -87,7 +88,38 @@ impl<T: Float> Positional<T> for Polar<T> {
     }
 }
 
-impl<T: Float> std::ops::Div<T> for Polar<T> {
+/************************************
+ * ARITHMETIC TRAIT IMPLEMENTATIONS *
+ ************************************/
+
+impl<T: Float + TrigConsts> Add for Polar<T> {
+    type Output = Self;
+
+    fn add(self, rhs: Self) -> Self::Output {
+        (Into::<Vector2<T>>::into(self) + Into::<Vector2<T>>::into(rhs)).into()
+    }
+}
+
+impl<T: Float + TrigConsts> Sub for Polar<T> {
+    type Output = Self;
+
+    fn sub(self, rhs: Self) -> Self::Output {
+        (Into::<Vector2<T>>::into(self) - Into::<Vector2<T>>::into(rhs)).into()
+    }
+}
+
+impl<T: Float> Mul<T> for Polar<T> {
+    type Output = Self;
+
+    fn mul(self, rhs: T) -> Self::Output {
+        Self {
+            radius: self.radius * rhs,
+            theta: self.theta,
+        }
+    }
+}
+
+impl<T: Float> Div<T> for Polar<T> {
     type Output = Self;
 
     fn div(self, rhs: T) -> Self::Output {
@@ -97,6 +129,21 @@ impl<T: Float> std::ops::Div<T> for Polar<T> {
         }
     }
 }
+
+impl<T: Float + TrigConsts> Neg for Polar<T> {
+    type Output = Polar<T>;
+
+    fn neg(self) -> Self::Output {
+        Polar {
+            radius: self.radius,
+            theta: (self.theta + T::PI) % T::TAU,
+        }
+    }
+}
+
+/************************
+ * FROM IMPLEMENTATIONS *
+ ************************/
 
 impl<T: Float> From<Vector2<T>> for Polar<T> {
     fn from(cart: Vector2<T>) -> Self {

@@ -1,6 +1,6 @@
 use std::{
     fmt::Display,
-    ops::{Add, Neg, Sub},
+    ops::{Add, Div, Mul, Neg, Sub},
 };
 
 use num_traits::Float;
@@ -254,7 +254,19 @@ impl<T: Float> Sub for Spherical<T> {
     }
 }
 
-impl<T: Float> std::ops::Div<T> for Spherical<T> {
+impl<T: Float> Mul<T> for Spherical<T> {
+    type Output = Self;
+
+    fn mul(self, rhs: T) -> Self::Output {
+        Self {
+            radius: self.radius * rhs,
+            azimuthal_angle: self.azimuthal_angle,
+            polar_angle: self.polar_angle,
+        }
+    }
+}
+
+impl<T: Float> Div<T> for Spherical<T> {
     type Output = Self;
 
     fn div(self, rhs: T) -> Self::Output {
