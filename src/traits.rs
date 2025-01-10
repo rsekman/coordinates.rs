@@ -1,4 +1,4 @@
-use num_traits::Float;
+use num_traits::{Float, Num};
 
 pub trait Positional<T: Float>
 where
@@ -59,7 +59,7 @@ where Self : Sized + std::ops::Div<T, Output = Self> + Copy,   {
     }
 }
 
-pub trait Dot<T: Float> {
+pub trait Dot<T: Num> {
     fn dot(&self, rhs: &Self) -> T;
 }
 
