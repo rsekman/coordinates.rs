@@ -17,7 +17,7 @@ use serde::{Deserialize, Serialize};
  ***************/
 
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Hash)]
 /// A point in 3d space
 pub struct Vector3<T: Num> {
     /// Left (-)/right (+) axis
